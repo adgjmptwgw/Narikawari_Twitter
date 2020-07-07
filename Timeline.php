@@ -21,10 +21,10 @@ if ($status == false) {
     echo json_encode(["error_msg" => "{$error[2]}"]);
 } else {
     $like_count = $stmt->fetchAll(PDO::FETCH_ASSOC); // fetchAllで全件取得
-    // var_dump($like_count);
-    // exit();
+
 }
 
+//  ↑「いいね」数カウント用
 // ----------------------------------------------------------------------------------------------------
 
 // $sql = "SELECT * FROM tweet_table INNER JOIN users_table ON tweet_table.fake_id = users_table.id";
@@ -48,6 +48,7 @@ if ($status == false) {
 // }
 
 // ----------------------------------------------------------------------------------------------------
+// ↓ like_tableとtweet_table結合
 
 // データ取得SQL作成
 $sql = 'SELECT * FROM tweet_table LEFT OUTER JOIN(SELECT todo_id, COUNT(id) AS cnt FROM like_table GROUP BY todo_id) AS likes ON tweet_table.id = likes.todo_id WHERE NOT real_id = 0';
@@ -79,7 +80,6 @@ if ($status == false) {
         $output .= "<td>{$record["tweet"]}</td>";
         $output .= "<td class='real_profile'>{$record["real_id"]}</td>";
         $output .= "<td class='fake_profile'>{$record["fake_id"]}</td>";
-        // $output .= "$fake_pictures";
         $output .= "<td><img src='{$record["image"]}' height=150px></td>";
         // edit deleteリンクを追加
         $output .= "<td><a href='like_create.php?user_id={$user_id}&todo_id={$record["id"]}'>like{$record["cnt"]}</a></td>";
@@ -87,8 +87,6 @@ if ($status == false) {
         $output .= "<td><a href='todo_delete.php?id={$record["id"]}'>delete</a></td>";
         $output .= "</tr>";
     }
-    // $valueの参照を解除する．解除しないと，再度foreachした場合に最初からループしない
-    // 今回は以降foreachしないので影響なし
     unset($value);
 }
 
@@ -161,13 +159,16 @@ HTML 要素
     </footer>
 
     <script>
-        $(".fake_profile").hide();
+        // 通常は なりきりツイート画面を表示
+        $(".real_profile").hide();
 
+        // 「ほんとう」のradioボタンクリック→本人の名前、プロフィール写真が表示
         $("#real_btn").on('click', function() {
             $(".fake_profile").hide();
             $(".real_profile").show();
         });
 
+        // 「なりきり」のradioボタンクリック→なりきった人の名前、プロフィール写真が表示
         $("#fake_btn").on('click', function() {
             $(".real_profile").hide();
             $(".fake_profile").show();

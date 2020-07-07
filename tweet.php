@@ -3,6 +3,7 @@ session_start();
 include("functions.php");
 check_session_id();
 
+// 現在ログインしている人のid・・・なりすましの履歴で用いる
 $real_id = $_SESSION["id"];
 
 // DB接続
@@ -38,10 +39,9 @@ if ($status == false) {
 //   ↓なりすましID受け取り(1つだけ受け取る)
 
 // データ取得SQL作成
-// なりすまし一覧で選んだfake_idを持ってくる
+// なりすまし一覧(pretend.php)で選んだfake_idをツイート画面(tweet.php)へ持ってくる→fake_idはツイート時に使用
+// LIMIT 1 を付けないと、今まで選んだ全てのfake_idが飛んでくる
 $sql = 'SELECT fake_id FROM tweet_table ORDER BY id DESC LIMIT 1';
-// var_dump($_GET);
-// exit;
 
 // SQL準備&実行
 $stmt = $pdo->prepare($sql);
@@ -59,17 +59,18 @@ if ($status == false) {
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);  // データの出力用変数（初期値は空文字）を設定
     $output = "";
     foreach ($result as $record) {
-        $output .= "{$record["fake_id"]}";
+    $output .= "{$record["fake_id"]}";
     }
     // $valueの参照を解除する．解除しないと，再度foreachした場合に最初からループしない
     // 今回は以降foreachしないので影響なし
     unset($value);
 }
-
+// ↑  なりすましID受け取り(1つだけ受け取る)
 // ----------------------------------------------------------------------------------------------------
-
 // ↓  1つ1つのfake_idを引っ張ってくる。過去5人になりすました履歴。
 
+// ログインしたユーザー(real_id)が過去になりすました人(fake_id)の履歴を取得
+// 「OFFSET 数字」は何行前のデータを取得するか選択できる。
 $sql1 = "SELECT fake_id FROM tweet_table WHERE real_id =  $real_id ORDER BY id DESC LIMIT 1 OFFSET 0";;
 $sql2 = "SELECT fake_id FROM tweet_table WHERE real_id =  $real_id ORDER BY id DESC LIMIT 1 OFFSET 1";;
 $sql3 = "SELECT fake_id FROM tweet_table WHERE real_id =  $real_id ORDER BY id DESC LIMIT 1 OFFSET 2";;
@@ -131,8 +132,10 @@ if ($status == false) {
 }
 
 // ----------------------------------------------------------------------------------------------------
+// ↓ 過去になりすました人の履歴を写真として表示する。上記で取得したfake_idを用いる
 
-
+// $pictureにはfake_idの数字だけが入っている。
+// その人が過去になりすました人のfake_idだけを取得
 $sql1 = "SELECT image FROM users_table WHERE id = $picture1";
 $sql2 = "SELECT image FROM users_table WHERE id = $picture2";
 $sql3 = "SELECT image FROM users_table WHERE id = $picture3";
@@ -235,12 +238,12 @@ HTML 要素
             <?= $picture_output5 ?>
             <a href='pretend.html'><img src='asset/アイコン集/三点リーダーアイコン1.png' alt='' style="width:30px; height:30px;"></a>
         </div>
-
+            <!-- なりすました人のID  hiddenで非表示にする予定。 -->
         <div>
             なりきりID: <input type="text" name="fake_id" id="fake_id" value="<?php echo $output ?>">
         </div>
         <div>
-            <!-- 本物ID  hiddenで非表示にしている -->
+            <!-- 本人のID  hiddenで非表示にしている。 -->
             <input type="text" name="real_id" value='<?php echo $_SESSION["id"] ?>' hidden>
         </div>
 
@@ -256,7 +259,7 @@ HTML 要素
     </form>
 
     <script>
-        // なりきりたいプロフィールのボタンをクリックするとinputタグにvalue値が入力される
+        // なりきりたいプロフィールの写真をクリックするとinputタグ(なりきりID)にvalue値が入力される
         $(".history").on('click', function() {
             var value_get = $(this).attr("value");
             $("#fake_id").val(value_get);

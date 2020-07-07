@@ -1,7 +1,6 @@
 <?php
 // 送信データのチェック
-// var_dump($_GET);
-// exit();
+
 session_start();
 
 // 関数ファイルの読み込み
@@ -27,14 +26,13 @@ if ($status == false) {
     echo json_encode(["error_msg" => "{$error[2]}"]);
     exit();
 } else {
-    // 正常にSQLが実行された場合は指定の11レコードを取得
-    // fetch()関数でSQLで取得したレコードを取得できる
+    // HTMLのuser_id表示欄で使用する変数
     $record_name = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-//    ↑user_idの表示
+//    ↑プロフィールの名前欄にuser_idの表示
 // ------------------------------------------------------------------------------------------------
-//    ↓プロフィール写真データ受け取り
+//    ↓プロフィール写真データ受け取り＆表示
 
 // データ取得SQL作成
 $sql = 'SELECT image FROM users_table WHERE id=:id';
@@ -55,8 +53,6 @@ if ($status == false) {
     // fetchAll()関数でSQLで取得したレコードを配列で取得できる
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);  // データの出力用変数（初期値は空文字）を設定
     $output = "";
-    // <tr><td>deadline</td><td>todo</td><tr>の形になるようにforeachで順番に$outputへデータを追加
-    // `.=`は後ろに文字列を追加する，の意味
     foreach ($result as $record) {
         $output .= "<p><img src='{$record["image"]}' height=150px></p>";
     }
@@ -89,10 +85,11 @@ HTML 要素
 
         <div>
             <input type="file" name="upfile" accept="image/*">
-            <div> <?php echo $output ?> </div>
+            <div> <?php echo $output ?> </div> <!-- プロフィール写真の表示 -->
         </div>
 
         <div>
+            <!-- ユーザー新規登録時に登録したuser_idを表示する -->
             <span>User ID : <?php echo $_SESSION["user_id"] ?></p></span>
         </div>
         <div>
@@ -106,6 +103,7 @@ HTML 要素
     </form>
 
     <script>
+        // もし、名前欄のvalueが空であれば、ユーザー新規登録時に登録したuser_idを名前欄に表示する
         if ($('#user_name').val() == "") {
             $('#user_name').val("<?= $_SESSION["user_id"] ?>");
         }
