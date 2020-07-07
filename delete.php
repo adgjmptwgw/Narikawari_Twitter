@@ -1,8 +1,6 @@
 <?php
 
 // 送信データのチェック
-// var_dump($_GET);
-// exit();
 session_start();
 // 関数ファイルの読み込み
 include("functions.php");
@@ -29,6 +27,6 @@ if ($status == false) {
   exit();
 } else {
   // 正常にSQLが実行された場合は一覧ページファイルに移動し，一覧ページの処理を実行する
-  header("Location:tweet.php");
+  header("Location:Timeline.php");
   exit();
 }

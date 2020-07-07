@@ -31,8 +31,6 @@ if (isset($_FILES['upfile']) && $_FILES['upfile']['error'] == 0) {
   $uniqueName = date('YmdHis') . md5(session_id()) . "." . $extension;
   $fileNameToSave = $fileDirectoryPath . $uniqueName;
 
-  // var_dump($fileNameToSave);
-  // exit();
 }
 
 

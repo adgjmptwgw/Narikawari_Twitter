@@ -37,13 +37,12 @@ if ($stmt->fetchColumn() > 0) {
 
 // ユーザ登録SQL作成
 // `created_at`と`updated_at`には実行時の`sysdate()`関数を用いて実行時の日時を入力する
-$sql = 'INSERT INTO users_table(id, user_id, password, is_admin, is_deleted, created_at, updated_at,name) VALUES(NULL, :user_id, :password, 0, 0, sysdate(), sysdate(), NULL)';
+$sql = 'INSERT INTO users_table(id, user_id, password, is_admin,updated_at,name) VALUES(NULL, :user_id, :password, 0,sysdate(), NULL)';
 
 // SQL準備&実行
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
 $stmt->bindValue(':password', $password, PDO::PARAM_STR);
-// $stmt->bindValue(':name', $name, PDO::PARAM_STR);
 $status = $stmt->execute();
 
 // データ登録処理後

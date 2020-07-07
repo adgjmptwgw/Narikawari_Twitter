@@ -10,7 +10,7 @@ $user_id = $_SESSION['id'];
 $pdo = connect_to_db();
 
 // いいね数カウント
-$sql = 'SELECT todo_id, COUNT(id) AS cnt FROM like_table GROUP BY todo_id';
+$sql = 'SELECT like_id, COUNT(id) AS cnt FROM like_table GROUP BY like_id';
 
 $stmt = $pdo->prepare($sql);
 $status = $stmt->execute();
@@ -51,7 +51,7 @@ if ($status == false) {
 // ↓ like_tableとtweet_table結合
 
 // データ取得SQL作成
-$sql = 'SELECT * FROM tweet_table LEFT OUTER JOIN(SELECT todo_id, COUNT(id) AS cnt FROM like_table GROUP BY todo_id) AS likes ON tweet_table.id = likes.todo_id WHERE NOT real_id = 0';
+$sql = 'SELECT * FROM tweet_table LEFT OUTER JOIN(SELECT like_id, COUNT(id) AS cnt FROM like_table GROUP BY like_id) AS likes ON tweet_table.id = likes.like_id WHERE NOT real_id = 0';
 // ※WHERE NOT real_id = 0 をつける理由
 //   なり変わり一覧(pretend.php)からツイート画面(tweet.php)にfake_idを飛ばす時fake_id以外の値は0を入れている。
 //   Timelineページにもその値が表示されてしまうのを防ぐ為にWHERE NOT real_id = 0で非表示にする。
@@ -81,10 +81,9 @@ if ($status == false) {
         $output .= "<td class='real_profile'>{$record["real_id"]}</td>";
         $output .= "<td class='fake_profile'>{$record["fake_id"]}</td>";
         $output .= "<td><img src='{$record["image"]}' height=150px></td>";
-        // edit deleteリンクを追加
-        $output .= "<td><a href='like_create.php?user_id={$user_id}&todo_id={$record["id"]}'>like{$record["cnt"]}</a></td>";
-        $output .= "<td><a href='Edit.php?id={$record["id"]}'>edit</a></td>";
-        $output .= "<td><a href='todo_delete.php?id={$record["id"]}'>delete</a></td>";
+        // deleteリンクを追加
+        $output .= "<td><a href='like_create.php?user_id={$user_id}&like_id={$record["id"]}'>like{$record["cnt"]}</a></td>";
+        $output .= "<td><a href='delete.php?id={$record["id"]}'>delete</a></td>";
         $output .= "</tr>";
     }
     unset($value);

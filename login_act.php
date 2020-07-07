@@ -13,7 +13,7 @@ $user_id = $_POST["user_id"];
 $password = $_POST["password"];
 
 // データ取得SQL作成&実行
-$sql = 'SELECT * FROM users_table WHERE user_id=:user_id AND password=:password AND is_deleted=0';
+$sql = 'SELECT * FROM users_table WHERE user_id=:user_id AND password=:password';
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);

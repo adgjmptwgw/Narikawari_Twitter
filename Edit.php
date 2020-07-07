@@ -81,6 +81,7 @@ HTML 要素
 
 <body>
     <legend>なりきりプロフィール編集</legend>
+    <a href="Timeline.php">ホーム画面</a>
     <form action="update.php" method="POST" enctype="multipart/form-data">
 
         <div>

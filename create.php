@@ -55,7 +55,7 @@ if (is_uploaded_file($tempPathName)) {
 
 // データ登録SQL作成
 // `created_at`と`updated_at`には実行時の`sysdate()`関数を用いて実行時の日時を入力する
-$sql = 'INSERT INTO tweet_table(id, fake_id, tweet, image, created_at, updated_at,real_id) VALUES(NULL, :fake_id, :tweet, :image, sysdate(), sysdate(),:real_id)';
+$sql = 'INSERT INTO tweet_table(id, fake_id, tweet, image, created_at,real_id) VALUES(NULL, :fake_id, :tweet, :image, sysdate(),:real_id)';
 
 // SQL準備&実行
 $stmt = $pdo->prepare($sql);
